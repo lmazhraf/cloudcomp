@@ -4,7 +4,13 @@ export function renderTasks(tasks) {
 
     tasks.forEach(task => {
         const li = document.createElement("li");
-        li.textContent = task.text;
+
+        li.innerHTML = `
+            <strong>${task.name}</strong> - 
+            ${task.text} 
+            (${task.date})
+        `;
+
         list.appendChild(li);
     });
 }
