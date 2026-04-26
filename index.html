@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Computing</title>
+    <title>Dashboard 1 - Input Task</title>
 
     <style>
         * {
@@ -13,20 +13,21 @@
         }
 
         body {
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #2f2f2f; /* Dark Grey */
+            background-color: #2f2f2f;
             font-family: Arial, sans-serif;
+            padding: 20px;
         }
 
         .container {
-            background-color: #f5f5f0; /* Broken White */
+            background-color: #f5f5f0;
             padding: 30px;
             border-radius: 10px;
-            width: 350px;
-            text-align: center;
+            width: 100%;
+            max-width: 450px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
 
@@ -34,48 +35,71 @@
             font-size: 28px;
             margin-bottom: 5px;
             color: #2f2f2f;
+            text-align: center;
         }
 
         .subtitle {
-            font-size: 12px;
-            margin-bottom: 20px;
-            color: #555;
+            font-size: 14px;
+            margin-bottom: 25px;
+            color: #666;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #2f2f2f;
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 14px;
             background-color: #2f2f2f;
             color: #f5f5f0;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: opacity 0.2s;
         }
 
         button:hover {
-            opacity: 0.9;
+            opacity: 0.85;
         }
 
-        ul {
+        .link {
+            text-align: center;
             margin-top: 20px;
-            text-align: left;
-            list-style: none;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
         }
 
-        li {
-            padding: 10px;
-            background-color: #eaeae5;
-            margin-bottom: 8px;
-            border-radius: 5px;
+        .link a {
+            color: #2f2f2f;
+            text-decoration: none;
             font-size: 14px;
+            font-weight: bold;
+        }
+
+        .link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -83,22 +107,68 @@
 <body>
 
     <div class="container">
-        <h1>Cloud Computing</h1>
-        <p class="subtitle">2450232001</p>
+        <h1>Dashboard 1</h1>
+        <p class="subtitle">Input Task</p>
 
         <!-- FORM INPUT -->
-        <input id="nameInput" placeholder="Nama">
-        <input id="taskInput" placeholder="Task">
+        <label for="nameInput">Nama</label>
+        <input id="nameInput" placeholder="Masukkan nama">
+
+        <label for="taskInput">Task</label>
+        <input id="taskInput" placeholder="Masukkan task">
+
+        <label for="dateInput">Tanggal</label>
         <input type="date" id="dateInput">
+
+        <label for="statusInput">Status</label>
+        <select id="statusInput" style="width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px;">
+            <option value="on-progress">On Progress</option>
+            <option value="done">Done</option>
+            <option value="cancelled">Cancelled</option>
+        </select>
 
         <button onclick="addTask()">Tambah Task</button>
 
-        <!-INPUT MANUAL->
-        <ul id="taskList"></ul>
+        <div class="link">
+            <a href="dashboard.html">Lihat Dashboard 2 →</a>
+        </div>
     </div>
 
-    <!-- MODUL (WAJIB) -->
-    <script type="module" src="assets/js/main.js"></script>
+    <script>
+        function addTask() {
+            const name = document.getElementById("nameInput").value.trim();
+            const task = document.getElementById("taskInput").value.trim();
+            const date = document.getElementById("dateInput").value;
+            const status = document.getElementById("statusInput").value;
+
+            if (!name || !task || !date) {
+                alert("Mohon isi semua field!");
+                return;
+            }
+
+            // Get existing tasks from localStorage
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+            // Add new task
+            tasks.push({
+                name: name,
+                task: task,
+                date: date,
+                status: status
+            });
+
+            // Save to localStorage
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+
+            // Clear inputs
+            document.getElementById("nameInput").value = "";
+            document.getElementById("taskInput").value = "";
+            document.getElementById("dateInput").value = "";
+            document.getElementById("statusInput").value = "on-progress";
+
+            alert("Task berhasil ditambahkan!");
+        }
+    </script>
 
 </body>
 </html>

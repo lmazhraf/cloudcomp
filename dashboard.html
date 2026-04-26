@@ -2,58 +2,224 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard Task</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard 2 - List Task</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial;
-      background: #f4f6f8;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #2f2f2f;
+      font-family: Arial, sans-serif;
       padding: 20px;
     }
+
     .container {
-      max-width: 700px;
-      margin: auto;
-      background: white;
-      padding: 20px;
+      background-color: #f5f5f0;
+      padding: 30px;
       border-radius: 10px;
+      width: 100%;
+      max-width: 900px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
+
     h2 {
+      font-size: 28px;
+      text-align: center;
+      margin-bottom: 5px;
+      color: #2f2f2f;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      margin-bottom: 25px;
+      color: #666;
       text-align: center;
     }
-    input {
-      padding: 10px;
-      width: 70%;
-      margin-right: 10px;
-    }
-    button {
-      padding: 10px;
-      cursor: pointer;
-    }
-    .task {
+
+    .input-group {
       display: flex;
-      justify-content: space-between;
-      background: #eee;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
+      gap: 10px;
+      margin-bottom: 25px;
     }
+
+    .input-group input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #2f2f2f;
+    }
+
+    .input-group button {
+      padding: 12px 25px;
+      background: #2f2f2f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+
+    .input-group button:hover {
+      opacity: 0.85;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background: #2f2f2f;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:hover {
+      background: #eaeae5;
+    }
+
     .actions button {
-      margin-left: 5px;
+      padding: 6px 12px;
+      margin-right: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+
+    .actions button:hover {
+      opacity: 0.85;
+    }
+
+    .edit-btn {
+      background: #2f2f2f;
+      color: white;
+    }
+
+    .delete-btn {
+      background: #c0392b;
+      color: white;
+    }
+
+    .link {
+      text-align: center;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
+
+    .link a {
+      color: #2f2f2f;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .link a:hover {
+      text-decoration: underline;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+      font-style: italic;
+    }
+
+    .status-select {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .status-badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status-done {
+      background: #27ae60;
+      color: white;
+    }
+
+    .status-progress {
+      background: #f39c12;
+      color: white;
+    }
+
+    .status-cancelled {
+      background: #c0392b;
+      color: white;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Task Dashboard</h2>
+  <h2>Dashboard 2</h2>
+  <p class="subtitle">List Task (CRUD)</p>
 
-  <!-- Add Task -->
-  <div>
-    <input type="text" id="taskInput" placeholder="Masukkan task...">
-    <button onclick="addTask()">Add</button>
+  <!-- Add/Edit Task -->
+  <div class="input-group">
+    <input type="hidden" id="editIndex">
+    <input type="text" id="nameInput" placeholder="Nama">
+    <input type="text" id="taskInput" placeholder="Task">
+    <input type="date" id="dateInput">
+    <select id="statusInput" class="status-select">
+      <option value="on-progress">On Progress</option>
+      <option value="done">Done</option>
+      <option value="cancelled">Cancelled</option>
+    </select>
+    <button onclick="saveTask()" id="saveBtn">Add</button>
   </div>
 
-  <!-- Task List -->
-  <div id="taskList"></div>
+  <!-- Task Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Nama</th>
+        <th>Task</th>
+        <th>Tanggal</th>
+        <th>Status</th>
+        <th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="taskTable">
+    </tbody>
+  </table>
+
+  <div class="link">
+    <a href="index.html">← Kembali ke Dashboard 1</a>
+  </div>
 </div>
 
 <script>
@@ -64,52 +230,84 @@
   }
 
   function renderTasks() {
-    const taskList = document.getElementById("taskList");
-    taskList.innerHTML = "";
+    const taskTable = document.getElementById("taskTable");
+    taskTable.innerHTML = "";
+
+    if (tasks.length === 0) {
+      taskTable.innerHTML = `<tr><td colspan="6" class="empty">Belum ada task. Tambahkan di Dashboard 1!</td></tr>`;
+      return;
+    }
 
     tasks.forEach((task, index) => {
-      taskList.innerHTML += `
-        <div class="task">
-          <span>${task}</span>
-          <div class="actions">
-            <button onclick="editTask(${index})">Edit</button>
-            <button onclick="deleteTask(${index})">Delete</button>
-          </div>
-        </div>
+      const statusClass = task.status === 'done' ? 'status-done' : task.status === 'cancelled' ? 'status-cancelled' : 'status-progress';
+      const statusText = task.status === 'done' ? 'Done' : task.status === 'cancelled' ? 'Cancelled' : 'On Progress';
+      
+      taskTable.innerHTML += `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${task.name}</td>
+          <td>${task.task}</td>
+          <td>${task.date}</td>
+          <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+          <td class="actions">
+            <button class="edit-btn" onclick="editTask(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+          </td>
+        </tr>
       `;
     });
   }
 
-  function addTask() {
-    const input = document.getElementById("taskInput");
-    const value = input.value.trim();
+  function saveTask() {
+    const editIndex = document.getElementById("editIndex").value;
+    const name = document.getElementById("nameInput").value.trim();
+    const task = document.getElementById("taskInput").value.trim();
+    const date = document.getElementById("dateInput").value;
+    const status = document.getElementById("statusInput").value;
 
-    if (value === "") {
-      alert("Task tidak boleh kosong");
+    if (!name || !task || !date) {
+      alert("Mohon isi semua field!");
       return;
     }
 
-    tasks.push(value);
+    if (editIndex !== "") {
+      // Update existing task
+      tasks[editIndex] = { name, task, date, status };
+      document.getElementById("editIndex").value = "";
+      document.getElementById("saveBtn").textContent = "Add";
+    } else {
+      // Add new task
+      tasks.push({ name, task, date, status });
+    }
+
     saveTasks();
     renderTasks();
-
-    input.value = "";
-  }
-
-  function deleteTask(index) {
-    tasks.splice(index, 1);
-    saveTasks();
-    renderTasks();
+    clearInputs();
   }
 
   function editTask(index) {
-    const newTask = prompt("Edit task:", tasks[index]);
+    const task = tasks[index];
+    document.getElementById("editIndex").value = index;
+    document.getElementById("nameInput").value = task.name;
+    document.getElementById("taskInput").value = task.task;
+    document.getElementById("dateInput").value = task.date;
+    document.getElementById("statusInput").value = task.status || "on-progress";
+    document.getElementById("saveBtn").textContent = "Update";
+  }
 
-    if (newTask !== null && newTask.trim() !== "") {
-      tasks[index] = newTask.trim();
+  function deleteTask(index) {
+    if (confirm("Yakin hapus task ini?")) {
+      tasks.splice(index, 1);
       saveTasks();
       renderTasks();
     }
+  }
+
+  function clearInputs() {
+    document.getElementById("nameInput").value = "";
+    document.getElementById("taskInput").value = "";
+    document.getElementById("dateInput").value = "";
+    document.getElementById("statusInput").value = "on-progress";
   }
 
   // Initial render
