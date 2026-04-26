@@ -12,13 +12,11 @@ window.addTask = function () {
     const text = taskInput.value.trim();
     const date = dateInput.value;
 
-    // 🔴 VALIDASI KOSONG
     if (!name || !text || !date) {
         alert("Semua field wajib diisi!");
         return;
     }
 
-    // 🔴 VALIDASI DUPLIKAT (nama + task + tanggal sama)
     const isDuplicate = tasks.some(task =>
         task.name === name &&
         task.text === text &&
@@ -30,7 +28,6 @@ window.addTask = function () {
         return;
     }
 
-    // ✅ BUAT DATA
     const newTask = {
         id: Date.now(),
         name: name,
