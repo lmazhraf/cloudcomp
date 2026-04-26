@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Task</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f8;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h2 {
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 70%;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px;
+      cursor: pointer;
+    }
+    .task {
+      display: flex;
+      justify-content: space-between;
+      background: #eee;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    .actions button {
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Task Dashboard</h2>
+
+  <!-- Add Task -->
+  <div>
+    <input type="text" id="taskInput" placeholder="Masukkan task...">
+    <button onclick="addTask()">Add</button>
+  </div>
+
+  <!-- Task List -->
+  <div id="taskList"></div>
+</div>
+
+<script>
+  let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+  function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }
+
+  function renderTasks() {
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+      taskList.innerHTML += `
+        <div class="task">
+          <span>${task}</span>
+          <div class="actions">
+            <button onclick="editTask(${index})">Edit</button>
+            <button onclick="deleteTask(${index})">Delete</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  function addTask() {
+    const input = document.getElementById("taskInput");
+    const value = input.value.trim();
+
+    if (value === "") {
+      alert("Task tidak boleh kosong");
+      return;
+    }
+
+    tasks.push(value);
+    saveTasks();
+    renderTasks();
+
+    input.value = "";
+  }
+
+  function deleteTask(index) {
+    tasks.splice(index, 1);
+    saveTasks();
+    renderTasks();
+  }
+
+  function editTask(index) {
+    const newTask = prompt("Edit task:", tasks[index]);
+
+    if (newTask !== null && newTask.trim() !== "") {
+      tasks[index] = newTask.trim();
+      saveTasks();
+      renderTasks();
+    }
+  }
+
+  // Initial render
+  renderTasks();
+</script>
+
+</body>
+</html>
