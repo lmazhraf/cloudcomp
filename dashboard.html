@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard 2 - List Task</title>
+  <title>Task Dashboard</title>
   <style>
     * {
       margin: 0;
@@ -12,71 +12,51 @@
     }
 
     body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       background-color: #2f2f2f;
       font-family: Arial, sans-serif;
       padding: 20px;
+      min-height: 100vh;
     }
 
     .container {
       background-color: #f5f5f0;
-      padding: 30px;
+      padding: 25px;
       border-radius: 10px;
-      width: 100%;
-      max-width: 900px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
     }
 
     h2 {
-      font-size: 28px;
+      font-size: 24px;
       text-align: center;
-      margin-bottom: 5px;
+      margin-bottom: 20px;
       color: #2f2f2f;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      margin-bottom: 25px;
-      color: #666;
-      text-align: center;
     }
 
     .input-group {
       display: flex;
       gap: 10px;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
     }
 
-    .input-group input {
+    .input-group input, .input-group select {
       flex: 1;
-      padding: 12px;
+      min-width: 150px;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 5px;
       font-size: 14px;
     }
 
-    .input-group input:focus {
-      outline: none;
-      border-color: #2f2f2f;
-    }
-
     .input-group button {
-      padding: 12px 25px;
+      padding: 10px 20px;
       background: #2f2f2f;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       font-size: 14px;
-      font-weight: bold;
-      transition: opacity 0.2s;
-    }
-
-    .input-group button:hover {
-      opacity: 0.85;
     }
 
     table {
@@ -85,7 +65,7 @@
     }
 
     th, td {
-      padding: 14px 12px;
+      padding: 12px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
@@ -93,7 +73,6 @@
     th {
       background: #2f2f2f;
       color: white;
-      font-weight: bold;
     }
 
     tr:hover {
@@ -101,18 +80,12 @@
     }
 
     .actions button {
-      padding: 6px 12px;
+      padding: 5px 10px;
       margin-right: 5px;
       cursor: pointer;
       border: none;
-      border-radius: 5px;
+      border-radius: 3px;
       font-size: 12px;
-      font-weight: bold;
-      transition: opacity 0.2s;
-    }
-
-    .actions button:hover {
-      opacity: 0.85;
     }
 
     .edit-btn {
@@ -125,75 +98,83 @@
       color: white;
     }
 
-    .link {
-      text-align: center;
-      margin-top: 25px;
-      padding-top: 20px;
-      border-top: 1px solid #ddd;
-    }
-
-    .link a {
-      color: #2f2f2f;
-      text-decoration: none;
-      font-size: 14px;
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
       font-weight: bold;
     }
 
-    .link a:hover {
-      text-decoration: underline;
+    .status-done { background: #27ae60; color: white; }
+    .status-progress { background: #f39c12; color: white; }
+    .status-cancelled { background: #c0392b; color: white; }
+
+    /* Chart Section */
+    .chart-container {
+      background-color: #f5f5f0;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 1000px;
+      margin: 0 auto;
     }
 
-    .empty {
-      text-align: center;
-      padding: 30px;
-      color: #666;
-      font-style: italic;
+    .chart-container h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #2f2f2f;
     }
 
-    .status-select {
-      padding: 12px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
+    .chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 200px;
+      padding: 20px 10px;
       background: white;
+      border-radius: 5px;
+      border: 1px solid #ddd;
     }
 
-    .status-badge {
-      padding: 5px 10px;
-      border-radius: 5px;
+    .bar-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .bar {
+      width: 40px;
+      background: #2f2f2f;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.3s;
+    }
+
+    .bar-label {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #333;
+    }
+
+    .bar-value {
       font-size: 12px;
       font-weight: bold;
-    }
-
-    .status-done {
-      background: #27ae60;
-      color: white;
-    }
-
-    .status-progress {
-      background: #f39c12;
-      color: white;
-    }
-
-    .status-cancelled {
-      background: #c0392b;
-      color: white;
+      margin-bottom: 5px;
+      color: #333;
     }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Dashboard 2</h2>
-  <p class="subtitle">List Task (CRUD)</p>
+  <h2>Task Dashboard</h2>
 
-  <!-- Add/Edit Task -->
+  <!-- Input Form -->
   <div class="input-group">
     <input type="hidden" id="editIndex">
     <input type="text" id="nameInput" placeholder="Nama">
     <input type="text" id="taskInput" placeholder="Task">
     <input type="date" id="dateInput">
-    <select id="statusInput" class="status-select">
+    <select id="statusInput">
       <option value="on-progress">On Progress</option>
       <option value="done">Done</option>
       <option value="cancelled">Cancelled</option>
@@ -213,13 +194,14 @@
         <th>Aksi</th>
       </tr>
     </thead>
-    <tbody id="taskTable">
-    </tbody>
+    <tbody id="taskTable"></tbody>
   </table>
+</div>
 
-  <div class="link">
-    <a href="index.html">← Kembali ke Dashboard 1</a>
-  </div>
+<!-- Bar Chart -->
+<div class="chart-container">
+  <h3>Distribusi Task per User</h3>
+  <div class="chart" id="chart"></div>
 </div>
 
 <script>
@@ -234,7 +216,7 @@
     taskTable.innerHTML = "";
 
     if (tasks.length === 0) {
-      taskTable.innerHTML = `<tr><td colspan="6" class="empty">Belum ada task. Tambahkan di Dashboard 1!</td></tr>`;
+      taskTable.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:20px;color:#666;">Belum ada task!</td></tr>`;
       return;
     }
 
@@ -249,11 +231,43 @@
           <td>${task.task}</td>
           <td>${task.date}</td>
           <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-          <td class="actions">
+          <td>
             <button class="edit-btn" onclick="editTask(${index})">Edit</button>
             <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
           </td>
         </tr>
+      `;
+    });
+  }
+
+  function renderChart() {
+    const chart = document.getElementById("chart");
+    chart.innerHTML = "";
+
+    // Count tasks per user
+    const userCounts = {};
+    tasks.forEach(task => {
+      userCounts[task.name] = (userCounts[task.name] || 0) + 1;
+    });
+
+    const users = Object.keys(userCounts);
+    const maxCount = Math.max(...Object.values(userCounts), 1);
+
+    if (users.length === 0) {
+      chart.innerHTML = "<p style='text-align:center;color:#666;width:100%;'>Belum ada data!</p>";
+      return;
+    }
+
+    users.forEach(user => {
+      const count = userCounts[user];
+      const height = (count / maxCount) * 150;
+      
+      chart.innerHTML += `
+        <div class="bar-group">
+          <div class="bar-value">${count}</div>
+          <div class="bar" style="height: ${height}px;"></div>
+          <div class="bar-label">${user}</div>
+        </div>
       `;
     });
   }
@@ -271,17 +285,16 @@
     }
 
     if (editIndex !== "") {
-      // Update existing task
       tasks[editIndex] = { name, task, date, status };
       document.getElementById("editIndex").value = "";
       document.getElementById("saveBtn").textContent = "Add";
     } else {
-      // Add new task
       tasks.push({ name, task, date, status });
     }
 
     saveTasks();
     renderTasks();
+    renderChart();
     clearInputs();
   }
 
@@ -300,6 +313,7 @@
       tasks.splice(index, 1);
       saveTasks();
       renderTasks();
+      renderChart();
     }
   }
 
@@ -312,6 +326,7 @@
 
   // Initial render
   renderTasks();
+  renderChart();
 </script>
 
 </body>
