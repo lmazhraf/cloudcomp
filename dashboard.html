@@ -206,7 +206,17 @@
 
 <script>
   let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-
+  if (tasks.length === 0) {
+    tasks = [
+        {
+            name: "Meyla Azzahra",
+            task: "Menambahkan task",
+            date: "2026-05-01",
+            status: "done"
+        }
+    ];
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
   function saveTasks() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }
