@@ -203,9 +203,10 @@
   <h3>Distribusi Task per User</h3>
   <div class="chart" id="chart"></div>
 </div>
-  function saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }
+
+<script>
+  // In-memory task storage (no localStorage needed)
+  let tasks = [];
 
   function renderTasks() {
     const taskTable = document.getElementById("taskTable");
@@ -219,7 +220,7 @@
     tasks.forEach((task, index) => {
       const statusClass = task.status === 'done' ? 'status-done' : task.status === 'cancelled' ? 'status-cancelled' : 'status-progress';
       const statusText = task.status === 'done' ? 'Done' : task.status === 'cancelled' ? 'Cancelled' : 'On Progress';
-      
+
       taskTable.innerHTML += `
         <tr>
           <td>${index + 1}</td>
@@ -240,7 +241,6 @@
     const chart = document.getElementById("chart");
     chart.innerHTML = "";
 
-    // Count tasks per user
     const userCounts = {};
     tasks.forEach(task => {
       userCounts[task.name] = (userCounts[task.name] || 0) + 1;
@@ -257,7 +257,7 @@
     users.forEach(user => {
       const count = userCounts[user];
       const height = (count / maxCount) * 150;
-      
+
       chart.innerHTML += `
         <div class="bar-group">
           <div class="bar-value">${count}</div>
@@ -288,7 +288,6 @@
       tasks.push({ name, task, date, status });
     }
 
-    saveTasks();
     renderTasks();
     renderChart();
     clearInputs();
@@ -307,7 +306,6 @@
   function deleteTask(index) {
     if (confirm("Yakin hapus task ini?")) {
       tasks.splice(index, 1);
-      saveTasks();
       renderTasks();
       renderChart();
     }
