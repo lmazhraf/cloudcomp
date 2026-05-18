@@ -22,7 +22,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            echo "🚀 Memulai Proses Deployment..."
+            echo "sedang diproses..."
             
             # Masuk ke direktori web server di VPS
             cd /var/www/cloudcomp
@@ -40,4 +40,4 @@ jobs:
               chmod 666 database.sqlite
             fi
             
-            echo "🎉 Deployment Berhasil Selesai!"
+            echo "Deploy Berhasil!"
