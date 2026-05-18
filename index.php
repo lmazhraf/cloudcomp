@@ -1,11 +1,8 @@
 <?php
-// ==========================================================================
-// BACKEND CONTROL LAYER: SQLite Connection, Table Check, and API Routing
-// ==========================================================================
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Read the Git commit hash dynamically and safely
+// Membaca hash commit Git secara dinamis dan aman
 $commit_hash = 'N/A';
 $git_dir = __DIR__ . '/.git';
 if (is_dir($git_dir)) {
@@ -36,7 +33,7 @@ try {
     exit;
 }
 
-// Auto-create table tasks if it does not exist (VPS and DevOps Ready)
+// Buat tabel tugas secara otomatis jika belum ada (Siap untuk VPS dan DevOps)
 $pdo->exec("
     CREATE TABLE IF NOT EXISTS tasks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,7 +44,7 @@ $pdo->exec("
     )
 ");
 
-// Pre-populate with realistic, beautiful seed tasks if database is empty
+// Isi terlebih dahulu dengan tugas-tugas awal yang realistis dan indah jika basis data kosong
 $stmt = $pdo->query("SELECT COUNT(*) FROM tasks");
 if ($stmt->fetchColumn() == 0) {
     $dummy_tasks = [
@@ -273,8 +270,8 @@ if ($action) {
                     </div>
                 </div>
             </div>
-
-            <!-- Online/Offline Connection Status Indicator -->
+            
+            <!-- Indikator Status Koneksi Online/Offline -->
             <div id="connection-status" class="connection-status online">
                 <span class="status-dot"></span>
                 <span class="status-text">Online</span>
@@ -284,10 +281,10 @@ if ($action) {
         <!-- MAIN LAYOUT GRID -->
         <div class="dashboard-grid">
             
-            <!-- LEFT PANEL: INPUT FORM & ANALYTICS CHART -->
+            <!-- PANEL KIRI: FORMULIR MASUKAN & BAGAN ANALITIK --
             <aside class="dashboard-left">
                 
-                <!-- TASK FORM CARD -->
+                <!-- KARTU FORMULIR TUGAS -->
                 <div class="card form-card">
                     <div class="card-header">
                         <i class="fa-solid fa-circle-plus text-primary"></i>
@@ -351,7 +348,7 @@ if ($action) {
                     </form>
                 </div>
 
-                <!-- ANALYTICS CARD: CANVAS BAR CHART -->
+                <!-- KARTU ANALITIK: CANVAS BAR CHART -->
                 <div class="card chart-card">
                     <div class="card-header header-between">
                         <div class="header-left">
@@ -366,7 +363,7 @@ if ($action) {
 
             </aside>
 
-            <!-- RIGHT PANEL: TASK CONTROLS & CARDS CONTAINER -->
+            <!-- PANEL KANAN: KONTROL TUGAS & WADAH KARTU --
             <main class="dashboard-right">
                 
                 <!-- FILTER & SEARCH BAR -->
@@ -401,9 +398,9 @@ if ($action) {
                     </div>
                 </div>
 
-                <!-- TASKS GRID LIST -->
+                <!-- DAFTAR KOTAK TUGAS -->
                 <div class="tasks-grid" id="tasks-cards-grid">
-                    <!-- Dynamic tasks cards injected by script.js -->
+                    <!-- Kartu tugas dinamis disuntikkan oleh script.js -->
                     <div id="loading-state" class="state-placeholder">
                         <i class="fa-solid fa-spinner-third fa-spin text-primary loader-icon"></i>
                         <p>Mengambil data dari server...</p>
