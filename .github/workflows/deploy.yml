@@ -1,25 +1,43 @@
-name: Deploy to Vercel
+name: Deploy via SSH to VPS
 
 on:
   push:
-    branches: [main, feature/task]
+    branches:
+      - main
 
 jobs:
   deploy:
+    name: Deploy Application
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout Repository Code
         uses: actions/checkout@v4
 
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Build and Deploy to Vercel
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-        run: |
-          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-          vercel build --token=$VERCEL_TOKEN
-          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+      - name: Deploy to VPS Server via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            echo "🚀 Memulai Proses Deployment..."
+            
+            # Masuk ke direktori web server di VPS
+            cd /var/www/cloudcomp
+            
+            # Tarik kode terbaru dari branch main di GitHub
+            git fetch --all
+            git reset --hard origin/main
+            
+            # Setel izin akses folder agar aman dan responsif
+            chmod -R 755 .
+            chown -R www-data:www-data .
+            
+            # Pastikan SQLite database writable oleh web server
+            if [ -f database.sqlite ]; then
+              chmod 666 database.sqlite
+            fi
+            
+            echo "🎉 Deployment Berhasil Selesai!"
