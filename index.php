@@ -342,10 +342,15 @@ if ($action) {
             <aside class="dashboard-left">
                 
                 <!-- KARTU FORMULIR TUGAS -->
-                <div class="card form-card">
-                    <div class="card-header">
-                        <i class="fa-solid fa-circle-plus text-primary"></i>
-                        <h2>Buat Tugas Baru</h2>
+                <div class="card form-card" id="form-card-panel">
+                    <div class="card-header header-between">
+                        <div class="header-left">
+                            <i class="fa-solid fa-circle-plus text-primary"></i>
+                            <h2>Buat Tugas Baru</h2>
+                        </div>
+                        <button type="button" class="btn-close-form" id="btn-close-form" title="Tutup Formulir">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
                     <form id="task-creation-form" class="task-form">
                         <div class="form-group">
@@ -510,6 +515,17 @@ if ($action) {
                             <button class="cat-tab-btn" data-category="Kerja"><i class="fa-solid fa-briefcase"></i> Kerja</button>
                             <button class="cat-tab-btn" data-category="Pribadi"><i class="fa-solid fa-user"></i> Pribadi</button>
                             <button class="cat-tab-btn" data-category="Lainnya"><i class="fa-solid fa-tag"></i> Umum</button>
+                        </div>
+                    </div>
+
+                    <!-- Prioritas Tab Filters -->
+                    <div class="priority-tabs-container">
+                        <span class="filter-title"><i class="fa-solid fa-triangle-exclamation"></i> Prioritas:</span>
+                        <div class="priority-tabs" id="priority-filter-tabs">
+                            <button class="pri-tab-btn active" data-priority="all">Semua</button>
+                            <button class="pri-tab-btn" data-priority="Tinggi"><span class="pri-dot high"></span> Tinggi</button>
+                            <button class="pri-tab-btn" data-priority="Sedang"><span class="pri-dot medium"></span> Sedang</button>
+                            <button class="pri-tab-btn" data-priority="Rendah"><span class="pri-dot low"></span> Rendah</button>
                         </div>
                     </div>
                     
@@ -681,6 +697,14 @@ if ($action) {
             </form>
         </div>
     </div>
+
+    <!-- MOBILE FLOATING ACTION BUTTON (FAB) -->
+    <button id="mobile-fab" class="mobile-fab" title="Tambah Tugas Baru">
+        <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <!-- MOBILE DRAWER BACKDROP OVERLAY -->
+    <div id="drawer-overlay" class="drawer-overlay"></div>
 
     <!-- LIGHTWEIGHT CONFETTI CANVAS -->
     <canvas id="confetti-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; display:none;"></canvas>

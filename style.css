@@ -1463,7 +1463,225 @@ body.dark-theme .meta-badge.category-tag {
     border-left: 4.5px solid var(--color-primary);
 }
 
+/* PRIORITAS TAB FILTERS */
+.priority-tabs-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-top: 1.5px solid var(--border-color);
+    padding-top: 0.85rem;
+}
+
+.priority-tabs {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.pri-tab-btn {
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.45rem 0.8rem;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background-color: var(--card-bg);
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: var(--transition-smooth);
+}
+
+.pri-tab-btn:hover {
+    background-color: var(--border-hover);
+    color: var(--text-primary);
+}
+
+.pri-tab-btn.active {
+    background-color: var(--color-primary-soft);
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.pri-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.pri-dot.high {
+    background-color: var(--color-danger);
+}
+.pri-dot.medium {
+    background-color: var(--color-warning);
+}
+.pri-dot.low {
+    background-color: var(--color-primary);
+}
+
+/* QUICK-ADD SUBTASK IN CARD */
+.quick-add-subtask-wrapper {
+    margin-top: 0.65rem;
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.quick-add-subtask-input {
+    flex: 1;
+    font-family: inherit;
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.75rem !important;
+    border-radius: 6px !important;
+    border: 1.5px solid var(--border-color) !important;
+    background-color: #fafbfc !important;
+    outline: none;
+    color: var(--text-primary);
+    transition: var(--transition-fast);
+}
+
+body.dark-theme .quick-add-subtask-input {
+    background-color: rgba(15, 23, 42, 0.2) !important;
+}
+
+.quick-add-subtask-input:focus {
+    border-color: var(--color-primary) !important;
+    background-color: var(--card-bg) !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.btn-quick-add-subtask {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.35rem;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+    border-radius: 4px;
+}
+
+.btn-quick-add-subtask:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-soft);
+}
+
+/* MOBILE CLOSE FORM BUTTON (HIDDEN BY DEFAULT) */
+.btn-close-form {
+    display: none;
+}
+
+/* MOBILE FLOATING ACTION BUTTON (FAB) & OVERLAY (HIDDEN BY DEFAULT) */
+.mobile-fab {
+    display: none;
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary) 0%, #1d4ed8 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    cursor: pointer;
+    z-index: 900;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    transition: var(--transition-smooth);
+}
+
+.mobile-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 28px rgba(59, 130, 246, 0.5);
+}
+
+.mobile-fab:active {
+    transform: scale(0.95);
+}
+
+.drawer-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 850;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.drawer-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
 /* RESPONSIVE DESIGN POLISH */
+@media (max-width: 1023px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Collapsible Form Card as Bottom Drawer */
+    .form-card {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 85vh;
+        overflow-y: auto;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        z-index: 880;
+        transform: translateY(105%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        margin: 0;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        background: var(--card-bg);
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .form-card.show {
+        transform: translateY(0);
+    }
+    
+    .btn-close-form {
+        display: flex;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 1.15rem;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        border-radius: var(--radius-sm);
+        justify-content: center;
+        align-items: center;
+        transition: var(--transition-fast);
+    }
+    
+    .btn-close-form:hover {
+        background-color: var(--border-hover);
+        color: var(--text-primary);
+    }
+    
+    .mobile-fab {
+        display: flex;
+    }
+}
+
 @media (max-width: 768px) {
     .search-sort-row {
         flex-direction: column;
@@ -1472,13 +1690,45 @@ body.dark-theme .meta-badge.category-tag {
     .sort-wrapper {
         width: 100%;
     }
-    .category-tabs-container, .status-tabs-container {
+    .category-tabs-container, .status-tabs-container, .priority-tabs-container {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
+        border-top: 1.5px solid var(--border-color);
+        padding-top: 0.85rem;
     }
     .filter-title {
         min-width: unset;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-wrapper {
+        padding: 1rem 0.75rem;
+    }
+    .dashboard-header {
+        padding: 1.25rem 1rem;
+    }
+    .header-logo {
+        gap: 0.75rem;
+    }
+    .logo-box {
+        width: 46px;
+        height: 46px;
+        font-size: 1.35rem;
+    }
+    .header-logo h1 {
+        font-size: 1.35rem;
+    }
+    .card {
+        padding: 1.25rem;
+    }
+    .task-card {
+        padding: 1.15rem;
+    }
+    .priority-pill span, .category-pill span {
+        padding: 0.55rem 0.5rem;
+        font-size: 0.8rem;
     }
 }
 

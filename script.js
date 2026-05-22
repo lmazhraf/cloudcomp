@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let tasks = [];
     let currentFilter = 'all';
     let currentCategoryFilter = 'all';
+    let currentPriorityFilter = 'all';
     let currentSort = 'newest';
     let searchQuery = '';
 
@@ -188,6 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     triggerConfetti();
                 }
 
+                // Close mobile bottom sheet drawer upon successful task creation
+                closeMobileForm();
+
                 updateDashboard();
             }
         } catch (error) {
@@ -232,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 3b. Update subtasks status (persistent checkbox change)
-    async function updateSubtaskStatus(id, subtasksList) {
+    async function updateSubtaskStatus(id, subtasksList, shouldReRender = false) {
         try {
             const response = await fetch(`${API_URL}?action=update_subtasks`, {
                 method: 'POST',
@@ -245,7 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.success) {
                 // Keep local state in sync
                 tasks = tasks.map(t => t.id === id ? { ...t, subtasks: data.subtasks } : t);
-                renderStats();
+                if (shouldReRender) {
+                    updateDashboard();
+                } else {
+                    renderStats();
+                }
             }
         } catch (error) {
             console.error('Error updating subtasks:', error);
@@ -405,6 +413,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentCategoryFilter !== 'all' && t.category !== currentCategoryFilter) {
                 return false;
             }
+            // Priority Tab Filter
+            if (currentPriorityFilter !== 'all' && t.priority !== currentPriorityFilter) {
+                return false;
+            }
             // Search Query Filter (Matches Name or Task description)
             if (searchQuery !== '') {
                 const term = searchQuery.toLowerCase();
@@ -481,30 +493,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Subtasks HTML construction
             let subtasksHTML = '';
-            if (task.subtasks && task.subtasks.length > 0) {
-                const totalSubs = task.subtasks.length;
-                const completedSubs = task.subtasks.filter(s => s.completed).length;
-                const percent = Math.round((completedSubs / totalSubs) * 100);
+            const totalSubs = task.subtasks ? task.subtasks.length : 0;
+            const completedSubs = task.subtasks ? task.subtasks.filter(s => s.completed).length : 0;
+            const percent = totalSubs > 0 ? Math.round((completedSubs / totalSubs) * 100) : 0;
 
-                subtasksHTML = `
-                    <div class="task-card-subtasks">
-                        <div class="subtask-progress-mini">
-                            <span>Sub-tugas: ${completedSubs}/${totalSubs} (${percent}%)</span>
-                            <div class="subtask-progress-bar">
-                                <div class="subtask-progress-fill" style="width: ${percent}%;"></div>
-                            </div>
-                        </div>
-                        <div class="subtasks-checklist">
-                            ${task.subtasks.map((sub, idx) => `
-                                <label class="subtask-item">
-                                    <input type="checkbox" class="subtask-checkbox" data-index="${idx}" ${sub.completed ? 'checked' : ''}>
-                                    <span>${escapeHTML(sub.text)}</span>
-                                </label>
-                            `).join('')}
+            subtasksHTML = `
+                <div class="task-card-subtasks">
+                    <div class="subtask-progress-mini" style="${totalSubs === 0 ? 'display: none;' : ''}">
+                        <span>Sub-tugas: ${completedSubs}/${totalSubs} (${percent}%)</span>
+                        <div class="subtask-progress-bar">
+                            <div class="subtask-progress-fill" style="width: ${percent}%;"></div>
                         </div>
                     </div>
-                `;
-            }
+                    <div class="subtasks-checklist" style="${totalSubs === 0 ? 'display: none;' : ''}">
+                        ${task.subtasks ? task.subtasks.map((sub, idx) => `
+                            <label class="subtask-item">
+                                <input type="checkbox" class="subtask-checkbox" data-index="${idx}" ${sub.completed ? 'checked' : ''}>
+                                <span>${escapeHTML(sub.text)}</span>
+                            </label>
+                        `).join('') : ''}
+                    </div>
+                    <div class="quick-add-subtask-wrapper">
+                        <input type="text" class="quick-add-subtask-input" placeholder="Tambah sub-tugas cepat..." maxlength="100">
+                        <button class="btn-quick-add-subtask" title="Tambah Sub-tugas">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
 
             card.innerHTML = `
                 <div class="card-top">
@@ -562,6 +578,39 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             // EVENT LISTENERS INSIDE TASK CARD
+
+            // Handle Quick-Add Subtask Input
+            const quickAddInput = card.querySelector('.quick-add-subtask-input');
+            const quickAddBtn = card.querySelector('.btn-quick-add-subtask');
+
+            const submitQuickSubtask = () => {
+                const val = quickAddInput.value.trim();
+                if (!val) return;
+
+                const newSubtasks = [...(task.subtasks || [])];
+                newSubtasks.push({
+                    text: val,
+                    completed: false
+                });
+
+                task.subtasks = newSubtasks;
+                quickAddInput.value = '';
+
+                // Save to DB and re-render the view
+                updateSubtaskStatus(task.id, newSubtasks, true);
+            };
+
+            quickAddInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitQuickSubtask();
+                }
+            });
+
+            quickAddBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                submitQuickSubtask();
+            });
             
             // Toggle Status Dropdown display
             const statusBadge = card.querySelector('.status-badge');
@@ -902,6 +951,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderTasks();
             });
         });
+    }
+
+    // Handle Priority Filter Tabs Click
+    const priorityTabs = document.getElementById('priority-filter-tabs');
+    if (priorityTabs) {
+        priorityTabs.querySelectorAll('.pri-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                priorityTabs.querySelectorAll('.pri-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentPriorityFilter = btn.dataset.priority;
+                renderTasks();
+            });
+        });
+    }
+
+    // ==========================================================================
+    // MOBILE DRAWER/FORM PANEL TOGGLE
+    // ==========================================================================
+    const mobileFab = document.getElementById('mobile-fab');
+    const formCardPanel = document.getElementById('form-card-panel');
+    const drawerOverlay = document.getElementById('drawer-overlay');
+    const btnCloseForm = document.getElementById('btn-close-form');
+
+    function openMobileForm() {
+        if (formCardPanel) formCardPanel.classList.add('show');
+        if (drawerOverlay) drawerOverlay.classList.add('show');
+    }
+
+    function closeMobileForm() {
+        if (formCardPanel) formCardPanel.classList.remove('show');
+        if (drawerOverlay) drawerOverlay.classList.remove('show');
+    }
+
+    if (mobileFab) {
+        mobileFab.addEventListener('click', openMobileForm);
+    }
+    if (btnCloseForm) {
+        btnCloseForm.addEventListener('click', closeMobileForm);
+    }
+    if (drawerOverlay) {
+        drawerOverlay.addEventListener('click', closeMobileForm);
     }
 
     // Handle Status Filter tabs click
