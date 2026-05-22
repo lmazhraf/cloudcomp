@@ -301,7 +301,7 @@ if ($action) {
                 </div>
                 <div>
                     <h1>TaskPlanner</h1>
-                    <p class="subtitle">Dashboard To-Do List Premium</p>
+                    <p class="subtitle">Website To-do-list Premium berbasis PHP</p>
                 </div>
             </div>
             

@@ -23,5 +23,3 @@ jobs:
             cd /var/www/taskplanner
             git pull origin Main
             chown -R www-data:www-data /var/www/taskplanner
-            # Jika perlu restart layanan, aktifkan baris di bawah
-            # systemctl reload nginx
