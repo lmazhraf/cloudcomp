@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     let tasks = [];
     let currentFilter = 'all';
+    let currentCategoryFilter = 'all';
+    let currentSort = 'newest';
     let searchQuery = '';
 
     // ==========================================================================
@@ -45,9 +47,79 @@ document.addEventListener('DOMContentLoaded', () => {
     // Connection Status Indicator
     const connectionStatusDiv = document.getElementById('connection-status');
 
+    // Theme Selector Toggle
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+
+    // Sort Selector
+    const sortSelect = document.getElementById('sort-select');
+
     // Set default date to today's date in local time zone
     const today = new Date().toISOString().split('T')[0];
     inputDate.value = today;
+
+
+    // ==========================================================================
+    // DARK / LIGHT THEME TOGGLE STUFF
+    // ==========================================================================
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggleBtn.querySelector('i').className = 'fa-solid fa-sun';
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark-theme');
+        if (isDark) {
+            localStorage.setItem('theme', 'dark');
+            themeToggleBtn.querySelector('i').className = 'fa-solid fa-sun';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggleBtn.querySelector('i').className = 'fa-solid fa-moon';
+        }
+        // Redraw canvas to update colors in dark theme
+        drawChart();
+    });
+
+
+    // ==========================================================================
+    // SUBTASK BUILDER LOGIC (CREATE & EDIT)
+    // ==========================================================================
+    function addSubtaskRow(type, text = '', completed = false) {
+        const container = document.getElementById(`subtask-list-${type}`);
+        if (!container) return;
+
+        const row = document.createElement('div');
+        row.className = 'subtask-input-row';
+        row.innerHTML = `
+            <input 
+                type="text" 
+                class="subtask-input-item" 
+                placeholder="Detail sub-tugas..." 
+                required 
+                maxlength="100" 
+                value="${escapeHTML(text)}"
+                data-completed="${completed}"
+            >
+            <button type="button" class="btn-remove-subtask-row" title="Hapus Sub-tugas">
+                <i class="fa-solid fa-trash-can"></i>
+            </button>
+        `;
+
+        // Bind delete action
+        row.querySelector('.btn-remove-subtask-row').addEventListener('click', () => {
+            row.remove();
+        });
+
+        container.appendChild(row);
+    }
+
+    document.getElementById('btn-add-subtask-create').addEventListener('click', () => {
+        addSubtaskRow('create');
+    });
+
+    document.getElementById('btn-add-subtask-edit').addEventListener('click', () => {
+        addSubtaskRow('edit');
+    });
 
 
     // ==========================================================================
@@ -66,7 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Map types from SQLite strings
             tasks = tasks.map(task => ({
                 ...task,
-                id: parseInt(task.id)
+                id: parseInt(task.id),
+                subtasks: Array.isArray(task.subtasks) ? task.subtasks : []
             }));
 
             updateDashboard();
@@ -92,14 +165,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Prepend new task to state
                 tasks.unshift({
                     ...data.task,
-                    id: parseInt(data.task.id)
+                    id: parseInt(data.task.id),
+                    subtasks: Array.isArray(data.task.subtasks) ? data.task.subtasks : []
                 });
                 
                 // Clear input form
                 inputTask.value = '';
                 inputDate.value = today;
                 inputStatus.value = 'on progress';
+
+                // Reset priority selection to Sedang
+                document.querySelector('input[name="create-priority"][value="Sedang"]').checked = true;
                 
+                // Reset category selection to Lainnya
+                document.querySelector('input[name="create-category"][value="Lainnya"]').checked = true;
+
+                // Clear subtasks list builder
+                document.getElementById('subtask-list-create').innerHTML = '';
+                
+                // Trigger confetti if status is done
+                if (data.task.status === 'done') {
+                    triggerConfetti();
+                }
+
                 updateDashboard();
             }
         } catch (error) {
@@ -114,6 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const originalTasks = JSON.parse(JSON.stringify(tasks));
         tasks = tasks.map(t => t.id === id ? { ...t, status: newStatus } : t);
         updateDashboard();
+
+        if (newStatus === 'done') {
+            triggerConfetti();
+        }
 
         try {
             const response = await fetch(`${API_URL}?action=update_status`, {
@@ -136,6 +228,27 @@ document.addEventListener('DOMContentLoaded', () => {
             tasks = originalTasks;
             updateDashboard();
             alert('Gagal menyambung ke server untuk memperbarui status.');
+        }
+    }
+
+    // 3b. Update subtasks status (persistent checkbox change)
+    async function updateSubtaskStatus(id, subtasksList) {
+        try {
+            const response = await fetch(`${API_URL}?action=update_subtasks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, subtasks: subtasksList })
+            });
+
+            if (!response.ok) throw new Error('Gagal merubah status sub-tugas');
+            const data = await response.json();
+            if (data.success) {
+                // Keep local state in sync
+                tasks = tasks.map(t => t.id === id ? { ...t, subtasks: data.subtasks } : t);
+                renderStats();
+            }
+        } catch (error) {
+            console.error('Error updating subtasks:', error);
         }
     }
 
@@ -191,9 +304,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: data.task.name,
                     task: data.task.task,
                     date: data.task.date,
-                    status: data.task.status
+                    status: data.task.status,
+                    priority: data.task.priority,
+                    category: data.task.category,
+                    subtasks: Array.isArray(data.task.subtasks) ? data.task.subtasks : []
                 } : t);
                 
+                // Trigger confetti if changed to done
+                if (data.task.status === 'done') {
+                    triggerConfetti();
+                }
+
                 // Close modal and sync UI
                 closeEditModal();
                 updateDashboard();
@@ -212,12 +333,30 @@ document.addEventListener('DOMContentLoaded', () => {
         editDate.value = task.date;
         editStatus.value = task.status;
         
+        // Priority
+        const priorityInput = document.querySelector(`input[name="edit-priority"][value="${task.priority || 'Sedang'}"]`);
+        if (priorityInput) priorityInput.checked = true;
+
+        // Category
+        const categoryInput = document.querySelector(`input[name="edit-category"][value="${task.category || 'Lainnya'}"]`);
+        if (categoryInput) categoryInput.checked = true;
+
+        // Populate subtasks in builder list
+        const subtaskListEdit = document.getElementById('subtask-list-edit');
+        subtaskListEdit.innerHTML = '';
+        if (task.subtasks && Array.isArray(task.subtasks)) {
+            task.subtasks.forEach(s => {
+                addSubtaskRow('edit', s.text, s.completed);
+            });
+        }
+        
         editModal.classList.add('show');
     }
 
     function closeEditModal() {
         editModal.classList.remove('show');
         editForm.reset();
+        document.getElementById('subtask-list-edit').innerHTML = '';
     }
 
     // ==========================================================================
@@ -252,14 +391,18 @@ document.addEventListener('DOMContentLoaded', () => {
         totalCounterText.textContent = `${total} total tugas`;
     }
 
-    // Render Task Cards with dynamic filters and searches
+    // Render Task Cards with dynamic filters, categories, and searches
     function renderTasks() {
         tasksCardsGrid.innerHTML = '';
 
         // Filter and Search array
-        const filtered = tasks.filter(t => {
+        let filtered = tasks.filter(t => {
             // Status Tab Filter
             if (currentFilter !== 'all' && t.status !== currentFilter) {
+                return false;
+            }
+            // Category Tab Filter
+            if (currentCategoryFilter !== 'all' && t.category !== currentCategoryFilter) {
                 return false;
             }
             // Search Query Filter (Matches Name or Task description)
@@ -272,6 +415,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         });
 
+        // Sorting
+        const priorityWeight = { 'Tinggi': 3, 'Sedang': 2, 'Rendah': 1 };
+        if (currentSort === 'newest') {
+            filtered.sort((a, b) => b.id - a.id);
+        } else if (currentSort === 'oldest') {
+            filtered.sort((a, b) => a.id - b.id);
+        } else if (currentSort === 'due_soon') {
+            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
+        } else if (currentSort === 'priority_desc') {
+            filtered.sort((a, b) => {
+                const wA = priorityWeight[a.priority] || 2;
+                const wB = priorityWeight[b.priority] || 2;
+                if (wB !== wA) return wB - wA;
+                return b.id - a.id; // secondary sort newest
+            });
+        }
+
         // Handle empty states
         if (filtered.length === 0) {
             showEmptyState();
@@ -281,7 +441,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render card elements
         filtered.forEach(task => {
             const card = document.createElement('div');
-            card.className = 'task-card';
+            // Border left strip based on priority
+            card.className = `task-card priority-${task.priority || 'Sedang'}`;
             card.dataset.id = task.id;
 
             // Generate initial initials for avatar
@@ -302,13 +463,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 iconClass = 'fa-regular fa-circle-xmark';
             }
 
+            // Category Icon mapping
+            let categoryIcon = '<i class="fa-solid fa-tag"></i> Umum';
+            if (task.category === 'Kuliah') {
+                categoryIcon = '<i class="fa-solid fa-graduation-cap"></i> Kuliah';
+            } else if (task.category === 'Kerja') {
+                categoryIcon = '<i class="fa-solid fa-briefcase"></i> Kerja';
+            } else if (task.category === 'Pribadi') {
+                categoryIcon = '<i class="fa-solid fa-user"></i> Pribadi';
+            }
+
+            // Check if task is overdue
+            let overdueBadge = '';
+            if (task.status !== 'done' && task.date < today) {
+                overdueBadge = `<span class="overdue-badge"><i class="fa-solid fa-triangle-exclamation"></i> Terlambat</span>`;
+            }
+
+            // Subtasks HTML construction
+            let subtasksHTML = '';
+            if (task.subtasks && task.subtasks.length > 0) {
+                const totalSubs = task.subtasks.length;
+                const completedSubs = task.subtasks.filter(s => s.completed).length;
+                const percent = Math.round((completedSubs / totalSubs) * 100);
+
+                subtasksHTML = `
+                    <div class="task-card-subtasks">
+                        <div class="subtask-progress-mini">
+                            <span>Sub-tugas: ${completedSubs}/${totalSubs} (${percent}%)</span>
+                            <div class="subtask-progress-bar">
+                                <div class="subtask-progress-fill" style="width: ${percent}%;"></div>
+                            </div>
+                        </div>
+                        <div class="subtasks-checklist">
+                            ${task.subtasks.map((sub, idx) => `
+                                <label class="subtask-item">
+                                    <input type="checkbox" class="subtask-checkbox" data-index="${idx}" ${sub.completed ? 'checked' : ''}>
+                                    <span>${escapeHTML(sub.text)}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
             card.innerHTML = `
                 <div class="card-top">
+                    <div class="card-meta-badges">
+                        <span class="meta-badge priority-${(task.priority || 'sedang').toLowerCase()}">${task.priority || 'Sedang'}</span>
+                        <span class="meta-badge category-tag">${categoryIcon}</span>
+                        ${overdueBadge}
+                    </div>
                     <div class="user-meta">
                         <div class="avatar-circle">${escapeHTML(initials)}</div>
                         <span class="user-name">${escapeHTML(task.name)}</span>
                     </div>
                     <p class="task-description">${escapeHTML(task.task)}</p>
+                    ${subtasksHTML}
                 </div>
                 <div class="card-bottom">
                     <div class="task-date">
@@ -378,6 +588,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
+            // Handle Subtasks Checkbox toggles
+            card.querySelectorAll('.subtask-checkbox').forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    const idx = parseInt(cb.dataset.index);
+                    const updatedSubtasks = [...task.subtasks];
+                    updatedSubtasks[idx].completed = cb.checked;
+                    
+                    // Optimistic UI updates of progress bar inside this card
+                    const completedSubs = updatedSubtasks.filter(s => s.completed).length;
+                    const totalSubs = updatedSubtasks.length;
+                    const newPercent = Math.round((completedSubs / totalSubs) * 100);
+                    
+                    const percentText = card.querySelector('.subtask-progress-mini span');
+                    if (percentText) {
+                        percentText.textContent = `Sub-tugas: ${completedSubs}/${totalSubs} (${newPercent}%)`;
+                    }
+                    const progressFill = card.querySelector('.subtask-progress-fill');
+                    if (progressFill) {
+                        progressFill.style.width = `${newPercent}%`;
+                    }
+
+                    // Save to DB
+                    updateSubtaskStatus(task.id, updatedSubtasks);
+                });
+            });
+
             // Handle Edit Click
             const editBtn = card.querySelector('.btn-action-edit');
             editBtn.addEventListener('click', (e) => {
@@ -402,6 +638,71 @@ document.addEventListener('DOMContentLoaded', () => {
             menu.classList.remove('show');
         });
     });
+
+
+    // ==========================================================================
+    // LIGHTWEIGHT CONFETTI PARTICLE SYSTEM (VANILLA JS ENGINE)
+    // ==========================================================================
+    function triggerConfetti() {
+        const canvas = document.getElementById('confetti-canvas');
+        if (!canvas) return;
+        canvas.style.display = 'block';
+        const ctx = canvas.getContext('2d');
+        
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+        
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+        const particles = [];
+        
+        // Spawn particles
+        for (let i = 0; i < 90; i++) {
+            particles.push({
+                x: width / 2,
+                y: height + 20,
+                vx: (Math.random() - 0.5) * 18,
+                vy: -Math.random() * 16 - 12,
+                size: Math.random() * 7 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                rotation: Math.random() * 360,
+                rotationSpeed: (Math.random() - 0.5) * 8
+            });
+        }
+        
+        let animationFrame;
+        function update() {
+            ctx.clearRect(0, 0, width, height);
+            let active = false;
+            
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.45; // gravity simulation
+                p.vx *= 0.98; // air drag
+                p.rotation += p.rotationSpeed;
+                
+                if (p.y < height + 20) {
+                    active = true;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.restore();
+                }
+            });
+            
+            if (active) {
+                animationFrame = requestAnimationFrame(update);
+            } else {
+                canvas.style.display = 'none';
+                cancelAnimationFrame(animationFrame);
+            }
+        }
+        
+        animationFrame = requestAnimationFrame(update);
+    }
+
 
     // ==========================================================================
     // CUSTOM CANVAS BAR CHART DRAWING ENGINE (VANILLA JS)
@@ -434,8 +735,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const users = Object.keys(userStats);
         const counts = Object.values(userStats);
 
+        // UI color updates based on Dark/Light theme
+        const isDark = document.body.classList.contains('dark-theme');
+        const gridColor = isDark ? '#334155' : '#f1f5f9';
+        const labelColor = isDark ? '#94a3b8' : '#64748b';
+        const countTextColor = isDark ? '#f8fafc' : '#0f172a';
+
         if (users.length === 0) {
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillStyle = labelColor;
             ctx.font = '500 13px Outfit';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -458,9 +765,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const yTicks = 4;
 
         // Draw horizontal gridlines and Y-axis tick values
-        ctx.strokeStyle = '#f1f5f9';
+        ctx.strokeStyle = gridColor;
         ctx.lineWidth = 1.5;
-        ctx.fillStyle = '#94a3b8';
+        ctx.fillStyle = labelColor;
         ctx.font = '600 10px Outfit';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
@@ -497,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gradient.addColorStop(1, '#2563eb'); // deep cobalt
             ctx.fillStyle = gradient;
 
-            // Render modern rounded corner top using path
+            // Render rounded corner top
             const radius = Math.min(6, barHeight > 0 ? barHeight : 0);
             ctx.beginPath();
             ctx.moveTo(x, y + barHeight);
@@ -510,14 +817,14 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fill();
 
             // Task quantity count labels above bar
-            ctx.fillStyle = '#0f172a';
+            ctx.fillStyle = countTextColor;
             ctx.font = '700 11px Outfit';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'bottom';
             ctx.fillText(taskCount.toString(), x + barWidth / 2, y - 4);
 
-            // User Name under bar on X-axis (only first name to make it extremely tidy and prevent overlap)
-            ctx.fillStyle = '#475569';
+            // User Name under bar on X-axis (only first name)
+            ctx.fillStyle = labelColor;
             ctx.font = '600 10px Outfit';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
@@ -532,8 +839,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Redraw canvas on window resize to remain fully responsive
     window.addEventListener('resize', drawChart);
 
+
     // ==========================================================================
-    // EVENT LISTENERS & SEARCH HANDLERS
+    // EVENT LISTENERS & SEARCH/SORT/FILTER HANDLERS
     // ==========================================================================
 
     // Handle Task Form Submit Creation
@@ -545,12 +853,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateVal = inputDate.value;
         const statusVal = inputStatus.value;
 
+        // Get values from pills selectors
+        const priorityVal = document.querySelector('input[name="create-priority"]:checked').value;
+        const categoryVal = document.querySelector('input[name="create-category"]:checked').value;
+
+        // Collect subtasks from builder list
+        const subtasksList = [];
+        document.querySelectorAll('#subtask-list-create .subtask-input-item').forEach(input => {
+            subtasksList.push({
+                text: input.value.trim(),
+                completed: false
+            });
+        });
+
         if (nameVal && taskVal && dateVal && statusVal) {
             addTask({
                 name: nameVal,
                 task: taskVal,
                 date: dateVal,
-                status: statusVal
+                status: statusVal,
+                priority: priorityVal,
+                category: categoryVal,
+                subtasks: subtasksList
             });
         }
     });
@@ -561,7 +885,26 @@ document.addEventListener('DOMContentLoaded', () => {
         renderTasks();
     });
 
-    // Handle Filter tab selection click
+    // Handle Sorting select
+    sortSelect.addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        renderTasks();
+    });
+
+    // Handle Category Filter Tabs Click
+    const categoryTabs = document.getElementById('category-filter-tabs');
+    if (categoryTabs) {
+        categoryTabs.querySelectorAll('.cat-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryTabs.querySelectorAll('.cat-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategoryFilter = btn.dataset.category;
+                renderTasks();
+            });
+        });
+    }
+
+    // Handle Status Filter tabs click
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             // Remove active classes
@@ -610,13 +953,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateVal = editDate.value;
         const statusVal = editStatus.value;
 
+        // Get pills
+        const priorityVal = document.querySelector('input[name="edit-priority"]:checked').value;
+        const categoryVal = document.querySelector('input[name="edit-category"]:checked').value;
+
+        // Compile subtasks
+        const subtasksList = [];
+        document.querySelectorAll('#subtask-list-edit .subtask-input-item').forEach(input => {
+            const completedVal = input.dataset.completed === 'true';
+            subtasksList.push({
+                text: input.value.trim(),
+                completed: completedVal
+            });
+        });
+
         if (idVal && nameVal && taskVal && dateVal && statusVal) {
             editTask({
                 id: idVal,
                 name: nameVal,
                 task: taskVal,
                 date: dateVal,
-                status: statusVal
+                status: statusVal,
+                priority: priorityVal,
+                category: categoryVal,
+                subtasks: subtasksList
             });
         }
     });
@@ -640,7 +1000,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="state-placeholder">
                 <i class="fa-regular fa-folder-open empty-icon"></i>
                 <p>Tidak ditemukan tugas yang sesuai.</p>
-                <span class="subtitle">Cobalah ubah filter status atau buat tugas baru!</span>
+                <span class="subtitle">Cobalah ubah filter status, kategori, atau buat tugas baru!</span>
             </div>
         `;
     }
