@@ -1,43 +1,25 @@
-name: Deploy via SSH to VPS
+name: Deploy to VPS
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
-    name: Deploy Application
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to VPS Server via SSH
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
           script: |
-            echo "sedang diproses..."
-            
-            # Masuk ke direktori web server di VPS
-            cd /var/www/cloudcomp
-            
-            # Tarik kode terbaru dari branch main di GitHub
-            git fetch --all
-            git reset --hard origin/main
-            
-            # Setel izin akses folder agar aman dan responsif
-            chmod -R 755 .
-            chown -R www-data:www-data .
-            
-            # Pastikan SQLite database writable oleh web server
-            if [ -f database.sqlite ]; then
-              chmod 666 database.sqlite
-            fi
-            
-            echo "Deploy Berhasil!"
+            cd /var/www/taskplanner
+            git pull origin main
+            chown -R www-data:www-data /var/www/taskplanner
