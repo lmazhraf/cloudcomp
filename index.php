@@ -62,11 +62,10 @@ if (!in_array('subtasks', $columns)) {
 $stmt = $pdo->query("SELECT COUNT(*) FROM tasks");
 if ($stmt->fetchColumn() == 0) {
     $dummy_tasks = [
-        ['Alice Watson', 'Implement PHP PDO SQLite connection layer', '2026-05-18', 'done', 'Tinggi', 'Kerja', '[]'],
-        ['Bob Miller', 'Design custom responsive product-grid system in style.css', '2026-05-19', 'on progress', 'Sedang', 'Kerja', '[{"text":"Buat file style.css","completed":true},{"text":"Terapkan glassmorphism","completed":false}]'],
-        ['Alice Watson', 'Develop high-performance Canvas API custom bar chart', '2026-05-20', 'on progress', 'Tinggi', 'Kuliah', '[{"text":"Gambar grid horizontal","completed":true},{"text":"Gambar bar gradient","completed":true},{"text":"Gambar label user","completed":false}]'],
-        ['Charlie Davies', 'Configure CI/CD workflows and dockerize for VPS deployment', '2026-05-22', 'cancelled', 'Rendah', 'Kerja', '[]'],
-        ['Bob Miller', 'Conduct visual quality assurance on desktop & mobile screens', '2026-05-21', 'done', 'Sedang', 'Lainnya', '[]']
+        ['Azhraf', 'Penerapan GIT Flow dan Kolaborasi', '2026-05-26', 'done', 'Tinggi', 'Kuliah', '[]'],
+        ['Meyla', 'Kualitas Aplikasi dan dokumentasi', '2026-05-26', 'on progress', 'Sedang', 'Kuliah', '[]'],
+        ['Rifky', 'Keberhasilan akses via Domain & HTTPS', '2026-05-19', 'done', 'Tinggi', 'Kuliah', '[]'],
+        ['Devi', 'Otomatisasi CI/CD', '2026-05-19', 'done', 'Sedang', 'Lainnya', '[]']
     ];
     $insert_stmt = $pdo->prepare("INSERT INTO tasks (name, task, date, status, priority, category, subtasks) VALUES (?, ?, ?, ?, ?, ?, ?)");
     foreach ($dummy_tasks as $task) {
@@ -300,8 +299,8 @@ if ($action) {
                     <i class="fa-solid fa-list-check"></i>
                 </div>
                 <div>
-                    <h1>TaskPlanner</h1>
-                    <p class="subtitle">Website To-do-list Premium berbasis PHP</p>
+                    <h1>To-Do List</h1>
+                    <p class="subtitle">Kelompok 3 - Cloud Computing</p>
                 </div>
             </div>
             
