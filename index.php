@@ -355,7 +355,7 @@ if ($action) {
                     <form id="task-creation-form" class="task-form">
                         <div class="form-group">
                             <label for="input-name">
-                                <i class="fa-solid fa-user"></i> Nama Pemilik (User)
+                                <i class="fa-solid fa-user"></i> Nama (User)
                             </label>
                             <input 
                                 type="text" 
