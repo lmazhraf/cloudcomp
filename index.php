@@ -568,7 +568,7 @@ if ($action) {
 
         <!-- FOOTER -->
         <footer class="dashboard-footer">
-            <p>TaskPlanner &copy; 2026 &bull; VPS-Ready Serverless SQLite PHP Stack &bull; <span class="commit-badge"><i class="fa-solid fa-code-branch"></i> <?= htmlspecialchars($commit_hash) ?></span></p>
+            <p>Copyright Kelompok 3 &copy; 2026 &bull; VPS-Ready Serverless SQLite PHP Stack &bull; <span class="commit-badge"><i class="fa-solid fa-code-branch"></i> <?= htmlspecialchars($commit_hash) ?></span></p>
         </footer>
     </div>
 
