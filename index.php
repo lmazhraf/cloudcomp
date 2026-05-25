@@ -437,7 +437,7 @@ if ($action) {
                         <div class="form-row">
                             <div class="form-group flex-1">
                                 <label for="input-date">
-                                    <i class="fa-regular fa-calendar-days"></i> Tanggal Batas
+                                    <i class="fa-regular fa-calendar-days"></i> Deadline
                                 </label>
                                 <input 
                                     type="date" 
@@ -448,7 +448,7 @@ if ($action) {
                             
                             <div class="form-group flex-1">
                                 <label for="input-status">
-                                    <i class="fa-solid fa-arrow-progress"></i> Status Awal
+                                    <i class="fa-solid fa-arrow-progress"></i> Status
                                 </label>
                                 <select id="input-status" required>
                                     <option value="on progress" selected>On Progress</option>
