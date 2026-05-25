@@ -469,7 +469,7 @@ if ($action) {
                     <div class="card-header header-between">
                         <div class="header-left">
                             <i class="fa-solid fa-chart-simple text-accent"></i>
-                            <h2>Volume Tugas Per User</h2>
+                            <h2>Visualisasi (Bar Chart)</h2>
                         </div>
                     </div>
                     <div class="chart-container">
