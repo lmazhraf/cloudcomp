@@ -299,8 +299,8 @@ if ($action) {
                     <i class="fa-solid fa-list-check"></i>
                 </div>
                 <div>
-                    <h1>TaskPlanner</h1>
-                    <p class="subtitle">Website To-do-list Premium berbasis PHP</p>
+                    <h1>To-Do List</h1>
+                    <p class="subtitle">Kelompok 3 - Cloud Computing</p>
                 </div>
             </div>
             
