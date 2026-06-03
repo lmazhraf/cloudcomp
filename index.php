@@ -340,7 +340,7 @@ if ($action) {
             <!-- PANEL KIRI: FORMULIR MASUKAN & BAGAN ANALITIK -->
             <aside class="dashboard-left">
                 
-                <!-- KARTU FORMULIR TUGAS -->
+                
                 <div class="card form-card" id="form-card-panel">
                     <div class="card-header header-between">
                         <div class="header-left">
@@ -379,7 +379,7 @@ if ($action) {
                             ></textarea>
                         </div>
 
-                        <!-- PILIHAN PRIORITAS (PILLS) -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-triangle-exclamation"></i> Prioritas Tugas</label>
                             <div class="priority-selector" id="priority-selector-create">
@@ -398,7 +398,7 @@ if ($action) {
                             </div>
                         </div>
 
-                        <!-- PILIHAN KATEGORI (PILLS) -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-tags"></i> Kategori</label>
                             <div class="category-selector" id="category-selector-create">
@@ -421,12 +421,12 @@ if ($action) {
                             </div>
                         </div>
 
-                        <!-- SUB-TUGAS BUILDER -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-list-check"></i> Sub-tugas (Checklist)</label>
                             <div class="subtask-builder-container">
                                 <div class="subtask-inputs-list" id="subtask-list-create">
-                                    <!-- Input baris sub-tugas dinamis di sini -->
+                                    
                                 </div>
                                 <button type="button" class="btn-add-subtask-row" id="btn-add-subtask-create">
                                     <i class="fa-solid fa-plus-circle"></i> Tambah Sub-tugas
@@ -464,7 +464,7 @@ if ($action) {
                     </form>
                 </div>
 
-                <!-- KARTU ANALITIK: CANVAS BAR CHART -->
+                
                 <div class="card chart-card">
                     <div class="card-header header-between">
                         <div class="header-left">
@@ -479,10 +479,10 @@ if ($action) {
 
             </aside>
 
-            <!-- PANEL KANAN: KONTROL TUGAS & WADAH KARTU -->
+            
             <main class="dashboard-right">
                 
-                <!-- FILTER & SEARCH BAR -->
+               
                 <div class="controls-bar">
                     <div class="search-sort-row">
                         <div class="search-wrapper">
