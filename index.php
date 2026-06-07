@@ -1,6 +1,27 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type');
+// Batasi CORS hanya ke domain sendiri (opsional)
+$allowed_origin = 'https://planmytask.my.id';
+if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
+    header('Access-Control-Allow-Origin: ' . $allowed_origin);
+    header('Access-Control-Allow-Headers: Content-Type');
+}
+
+// Content Security Policy (CSP)
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';");
+
+// Anti-clickjacking
+header('X-Frame-Options: DENY');
+
+// HTTP Strict Transport Security (HSTS)
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+
+// Mencegah MIME sniffing
+header('X-Content-Type-Options: nosniff');
+
+// Cache-Control untuk halaman dinamis
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 // Membaca hash commit Git secara dinamis dan aman
 $commit_hash = 'N/A';
@@ -469,7 +490,7 @@ if ($action) {
                     <div class="card-header header-between">
                         <div class="header-left">
                             <i class="fa-solid fa-chart-simple text-accent"></i>
-                            <h2>Visualisasi (Bar Chart)</h2>
+                            <h2>Visualisasi - Bar Chart</h2>
                         </div>
                     </div>
                     <div class="chart-container">
