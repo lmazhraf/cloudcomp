@@ -361,7 +361,7 @@ if ($action) {
             <!-- PANEL KIRI: FORMULIR MASUKAN & BAGAN ANALITIK -->
             <aside class="dashboard-left">
                 
-                <!-- KARTU FORMULIR TUGAS -->
+                
                 <div class="card form-card" id="form-card-panel">
                     <div class="card-header header-between">
                         <div class="header-left">
@@ -375,7 +375,7 @@ if ($action) {
                     <form id="task-creation-form" class="task-form">
                         <div class="form-group">
                             <label for="input-name">
-                                <i class="fa-solid fa-user"></i> Nama Pemilik (User)
+                                <i class="fa-solid fa-user"></i> Nama (User)
                             </label>
                             <input 
                                 type="text" 
@@ -400,7 +400,7 @@ if ($action) {
                             ></textarea>
                         </div>
 
-                        <!-- PILIHAN PRIORITAS (PILLS) -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-triangle-exclamation"></i> Prioritas Tugas</label>
                             <div class="priority-selector" id="priority-selector-create">
@@ -419,7 +419,7 @@ if ($action) {
                             </div>
                         </div>
 
-                        <!-- PILIHAN KATEGORI (PILLS) -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-tags"></i> Kategori</label>
                             <div class="category-selector" id="category-selector-create">
@@ -442,12 +442,12 @@ if ($action) {
                             </div>
                         </div>
 
-                        <!-- SUB-TUGAS BUILDER -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-list-check"></i> Sub-tugas (Checklist)</label>
                             <div class="subtask-builder-container">
                                 <div class="subtask-inputs-list" id="subtask-list-create">
-                                    <!-- Input baris sub-tugas dinamis di sini -->
+                                    
                                 </div>
                                 <button type="button" class="btn-add-subtask-row" id="btn-add-subtask-create">
                                     <i class="fa-solid fa-plus-circle"></i> Tambah Sub-tugas
@@ -458,7 +458,7 @@ if ($action) {
                         <div class="form-row">
                             <div class="form-group flex-1">
                                 <label for="input-date">
-                                    <i class="fa-regular fa-calendar-days"></i> Tanggal Batas
+                                    <i class="fa-regular fa-calendar-days"></i> Deadline
                                 </label>
                                 <input 
                                     type="date" 
@@ -469,7 +469,7 @@ if ($action) {
                             
                             <div class="form-group flex-1">
                                 <label for="input-status">
-                                    <i class="fa-solid fa-arrow-progress"></i> Status Awal
+                                    <i class="fa-solid fa-arrow-progress"></i> Status
                                 </label>
                                 <select id="input-status" required>
                                     <option value="on progress" selected>On Progress</option>
@@ -485,7 +485,7 @@ if ($action) {
                     </form>
                 </div>
 
-                <!-- KARTU ANALITIK: CANVAS BAR CHART -->
+                
                 <div class="card chart-card">
                     <div class="card-header header-between">
                         <div class="header-left">
@@ -500,10 +500,10 @@ if ($action) {
 
             </aside>
 
-            <!-- PANEL KANAN: KONTROL TUGAS & WADAH KARTU -->
+            
             <main class="dashboard-right">
                 
-                <!-- FILTER & SEARCH BAR -->
+               
                 <div class="controls-bar">
                     <div class="search-sort-row">
                         <div class="search-wrapper">
@@ -588,7 +588,7 @@ if ($action) {
 
         <!-- FOOTER -->
         <footer class="dashboard-footer">
-            <p>TaskPlanner &copy; 2026 &bull; VPS-Ready Serverless SQLite PHP Stack &bull; <span class="commit-badge"><i class="fa-solid fa-code-branch"></i> <?= htmlspecialchars($commit_hash) ?></span></p>
+            <p>Copyright &copy; 2026 &bull; To-Do List Kelompok 3 &bull; <span class="commit-badge"><i class="fa-solid fa-code-branch"></i> <?= htmlspecialchars($commit_hash) ?></span></p>
         </footer>
     </div>
 
