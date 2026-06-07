@@ -609,7 +609,7 @@ if ($action) {
                 
                 <div class="form-group">
                     <label for="edit-name">
-                        <i class="fa-solid fa-user"></i> Nama Pemilik (User)
+                        <i class="fa-solid fa-user"></i> Nama User
                     </label>
                     <input 
                         type="text" 
