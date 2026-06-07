@@ -1,24 +1,27 @@
 <?php
-// Batasi CORS hanya ke domain sendiri (opsional)
-$allowed_origin = 'https://planmytask.my.id';
+// ========== PERBAIKAN KEAMANAN HEADER ==========
+
+// 1. Batasi CORS hanya ke domain sendiri (hapus blok ini jika tidak butuh CORS sama sekali)
+$allowed_origin = 'https://planmytask.my.id';   // sudah diperbaiki typo
 if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
     header('Access-Control-Allow-Origin: ' . $allowed_origin);
     header('Access-Control-Allow-Headers: Content-Type');
 }
+// Jika tidak butuh CORS, hapus 4 baris di atas.
 
-// Content Security Policy (CSP)
+// 2. Content Security Policy (CSP) – lengkap dengan izin CDN
 header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';");
 
-// Anti-clickjacking
+// 3. Anti-clickjacking
 header('X-Frame-Options: DENY');
 
-// HTTP Strict Transport Security (HSTS)
+// 4. HTTP Strict Transport Security (HSTS)
 header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
 
-// Mencegah MIME sniffing
+// 5. Mencegah MIME sniffing
 header('X-Content-Type-Options: nosniff');
 
-// Cache-Control untuk halaman dinamis
+// 6. Cache-Control untuk halaman dinamis
 header('Cache-Control: no-cache, no-store, must-revalidate');
 header('Pragma: no-cache');
 header('Expires: 0');
