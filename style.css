@@ -1,7 +1,3 @@
-/* ==========================================================================
-   TASKPLANNER MODERN STYLESHEET (VANILLA CSS)
-   ========================================================================== */
-
 :root {
     /* Color System */
     --bg-gradient-start: #f8fafc;
@@ -62,7 +58,7 @@ body.dark-theme {
     --text-muted: #64748b;
     --border-color: #334155;
     --border-hover: #475569;
-    
+
     --header-bg: rgba(30, 41, 59, 0.7);
     --header-border: rgba(255, 255, 255, 0.05);
 
@@ -73,7 +69,15 @@ body.dark-theme {
 }
 
 /* Transition sync for smooth theme change */
-body, .card, header, aside, main, input, select, textarea, button {
+body,
+.card,
+header,
+aside,
+main,
+input,
+select,
+textarea,
+button {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -84,7 +88,8 @@ body, .card, header, aside, main, input, select, textarea, button {
     padding: 0;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     min-height: 100vh;
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -670,10 +675,12 @@ html, body {
     background-color: var(--color-success-soft);
     color: var(--color-success);
 }
+
 .badge-progress {
     background-color: var(--color-warning-soft);
     color: var(--color-warning);
 }
+
 .badge-cancelled {
     background-color: var(--color-danger-soft);
     color: var(--color-danger);
@@ -733,13 +740,33 @@ html, body {
 }
 
 /* CORE UTILITY COLOR BADGES */
-.bg-primary { background-color: var(--color-primary); }
-.bg-warning { background-color: var(--color-warning); }
-.bg-success { background-color: var(--color-success); }
-.bg-danger { background-color: var(--color-danger); }
-.text-primary { color: var(--color-primary); }
-.text-success { color: var(--color-success); }
-.text-accent { color: #8b5cf6; }
+.bg-primary {
+    background-color: var(--color-primary);
+}
+
+.bg-warning {
+    background-color: var(--color-warning);
+}
+
+.bg-success {
+    background-color: var(--color-success);
+}
+
+.bg-danger {
+    background-color: var(--color-danger);
+}
+
+.text-primary {
+    color: var(--color-primary);
+}
+
+.text-success {
+    color: var(--color-success);
+}
+
+.text-accent {
+    color: #8b5cf6;
+}
 
 /* ANIMATIONS */
 @keyframes cardAppear {
@@ -747,6 +774,7 @@ html, body {
         opacity: 0;
         transform: translateY(12px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -754,8 +782,13 @@ html, body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 /* FOOTER */
@@ -774,6 +807,7 @@ html, body {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
+
     .dashboard-wrapper {
         padding: 1.5rem 1rem;
     }
@@ -785,21 +819,27 @@ html, body {
         align-items: stretch;
         padding: 1.25rem 1.5rem;
     }
+
     .header-stats {
         max-width: 100%;
     }
+
     .form-row {
         flex-direction: column;
     }
+
     .controls-bar {
         padding: 1rem;
     }
+
     .filter-tabs {
         flex-direction: column;
     }
+
     .tab-btn {
         width: 100%;
     }
+
     .tasks-grid {
         grid-template-columns: 1fr;
     }
@@ -854,9 +894,12 @@ html, body {
 }
 
 @keyframes pulseGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.2);
     }
+
     50% {
         box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
     }
@@ -1021,12 +1064,14 @@ html, body {
     box-shadow: var(--shadow-sm);
     transition: var(--transition-smooth);
 }
+
 .theme-toggle-btn:hover {
     transform: rotate(15deg) scale(1.08);
     background-color: var(--color-primary-soft);
     color: var(--color-primary);
     border-color: var(--color-primary);
 }
+
 .header-actions {
     display: flex;
     align-items: center;
@@ -1034,14 +1079,16 @@ html, body {
 }
 
 /* PILLS SELECTOR (PRIORITY & CATEGORY) */
-.priority-selector, .category-selector {
+.priority-selector,
+.category-selector {
     display: flex;
     gap: 0.5rem;
     width: 100%;
     flex-wrap: wrap;
 }
 
-.priority-pill, .category-pill {
+.priority-pill,
+.category-pill {
     flex: 1;
     min-width: 80px;
     position: relative;
@@ -1050,14 +1097,16 @@ html, body {
     text-align: center;
 }
 
-.priority-pill input, .category-pill input {
+.priority-pill input,
+.category-pill input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.priority-pill span, .category-pill span {
+.priority-pill span,
+.category-pill span {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1072,27 +1121,28 @@ html, body {
     transition: var(--transition-smooth);
 }
 
-.priority-pill:hover span, .category-pill:hover span {
+.priority-pill:hover span,
+.category-pill:hover span {
     border-color: var(--border-hover);
     color: var(--text-primary);
 }
 
 /* Priority Active Colors */
-.priority-pill.low input:checked + span {
+.priority-pill.low input:checked+span {
     background-color: var(--color-primary-soft);
     border-color: var(--color-primary);
     color: var(--color-primary);
     box-shadow: 0 2px 8px -2px rgba(59, 130, 246, 0.2);
 }
 
-.priority-pill.medium input:checked + span {
+.priority-pill.medium input:checked+span {
     background-color: var(--color-warning-soft);
     border-color: var(--color-warning);
     color: var(--color-warning);
     box-shadow: 0 2px 8px -2px rgba(245, 158, 11, 0.2);
 }
 
-.priority-pill.high input:checked + span {
+.priority-pill.high input:checked+span {
     background-color: var(--color-danger-soft);
     border-color: var(--color-danger);
     color: var(--color-danger);
@@ -1100,7 +1150,7 @@ html, body {
 }
 
 /* Category Active Colors */
-.category-pill input:checked + span {
+.category-pill input:checked+span {
     background-color: var(--color-primary-soft);
     border-color: var(--color-primary);
     color: var(--color-primary);
@@ -1117,6 +1167,7 @@ html, body {
     padding: 0.85rem;
     background-color: rgba(248, 250, 252, 0.4);
 }
+
 body.dark-theme .subtask-builder-container {
     background-color: rgba(15, 23, 42, 0.25);
 }
@@ -1135,8 +1186,15 @@ body.dark-theme .subtask-builder-container {
 }
 
 @keyframes slideInDown {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .subtask-input-row input {
@@ -1235,7 +1293,8 @@ body.dark-theme .subtask-builder-container {
 }
 
 /* ADVANCED CATEGORIES FILTERS */
-.category-tabs-container, .status-tabs-container {
+.category-tabs-container,
+.status-tabs-container {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -1315,6 +1374,7 @@ body.dark-theme .subtask-builder-container {
     overflow: hidden;
     position: relative;
 }
+
 body.dark-theme .subtask-progress-bar {
     background-color: rgba(51, 65, 85, 0.8);
 }
@@ -1358,6 +1418,7 @@ body.dark-theme .subtask-progress-bar {
 .subtask-item:hover {
     background-color: rgba(241, 245, 249, 0.5);
 }
+
 body.dark-theme .subtask-item:hover {
     background-color: rgba(51, 65, 85, 0.3);
 }
@@ -1379,7 +1440,7 @@ body.dark-theme .subtask-item:hover {
     transition: var(--transition-fast);
 }
 
-.subtask-item input[type="checkbox"]:checked + span {
+.subtask-item input[type="checkbox"]:checked+span {
     color: var(--text-muted);
     text-decoration: line-through;
 }
@@ -1428,6 +1489,7 @@ body.dark-theme .subtask-item:hover {
     color: var(--text-secondary);
     border: 1px solid var(--border-color);
 }
+
 body.dark-theme .meta-badge.category-tag {
     background-color: rgba(51, 65, 85, 0.5);
 }
@@ -1448,17 +1510,28 @@ body.dark-theme .meta-badge.category-tag {
 }
 
 @keyframes pulseRed {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(0.97); }
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(0.97);
+    }
 }
 
 /* LEFT STRIPE INDICATORS BASED ON PRIORITY */
 .task-card.priority-Tinggi {
     border-left: 4.5px solid var(--color-danger);
 }
+
 .task-card.priority-Sedang {
     border-left: 4.5px solid var(--color-warning);
 }
+
 .task-card.priority-Rendah {
     border-left: 4.5px solid var(--color-primary);
 }
@@ -1515,9 +1588,11 @@ body.dark-theme .meta-badge.category-tag {
 .pri-dot.high {
     background-color: var(--color-danger);
 }
+
 .pri-dot.medium {
     background-color: var(--color-warning);
 }
+
 .pri-dot.low {
     background-color: var(--color-primary);
 }
@@ -1632,7 +1707,7 @@ body.dark-theme .quick-add-subtask-input {
     .dashboard-grid {
         grid-template-columns: 1fr;
     }
-    
+
     /* Collapsible Form Card as Bottom Drawer */
     .form-card {
         position: fixed;
@@ -1652,11 +1727,11 @@ body.dark-theme .quick-add-subtask-input {
         background: var(--card-bg);
         box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15);
     }
-    
+
     .form-card.show {
         transform: translateY(0);
     }
-    
+
     .btn-close-form {
         display: flex;
         background: none;
@@ -1671,12 +1746,12 @@ body.dark-theme .quick-add-subtask-input {
         align-items: center;
         transition: var(--transition-fast);
     }
-    
+
     .btn-close-form:hover {
         background-color: var(--border-hover);
         color: var(--text-primary);
     }
-    
+
     .mobile-fab {
         display: flex;
     }
@@ -1687,16 +1762,21 @@ body.dark-theme .quick-add-subtask-input {
         flex-direction: column;
         align-items: stretch;
     }
+
     .sort-wrapper {
         width: 100%;
     }
-    .category-tabs-container, .status-tabs-container, .priority-tabs-container {
+
+    .category-tabs-container,
+    .status-tabs-container,
+    .priority-tabs-container {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
         border-top: 1.5px solid var(--border-color);
         padding-top: 0.85rem;
     }
+
     .filter-title {
         min-width: unset;
     }
@@ -1706,29 +1786,36 @@ body.dark-theme .quick-add-subtask-input {
     .dashboard-wrapper {
         padding: 1rem 0.75rem;
     }
+
     .dashboard-header {
         padding: 1.25rem 1rem;
     }
+
     .header-logo {
         gap: 0.75rem;
     }
+
     .logo-box {
         width: 46px;
         height: 46px;
         font-size: 1.35rem;
     }
+
     .header-logo h1 {
         font-size: 1.35rem;
     }
+
     .card {
         padding: 1.25rem;
     }
+
     .task-card {
         padding: 1.15rem;
     }
-    .priority-pill span, .category-pill span {
+
+    .priority-pill span,
+    .category-pill span {
         padding: 0.55rem 0.5rem;
         font-size: 0.8rem;
     }
 }
-

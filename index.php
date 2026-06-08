@@ -1,6 +1,30 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type');
+// ========== PERBAIKAN KEAMANAN HEADER ==========
+
+// 1. Batasi CORS hanya ke domain sendiri (hapus blok ini jika tidak butuh CORS sama sekali)
+$allowed_origin = 'https://planmytask.my.id';   // sudah diperbaiki typo
+if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] === $allowed_origin) {
+    header('Access-Control-Allow-Origin: ' . $allowed_origin);
+    header('Access-Control-Allow-Headers: Content-Type');
+}
+// Jika tidak butuh CORS, hapus 4 baris di atas.
+
+// 2. Content Security Policy (CSP) – lengkap dengan izin CDN
+header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';");
+
+// 3. Anti-clickjacking
+header('X-Frame-Options: DENY');
+
+// 4. HTTP Strict Transport Security (HSTS)
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+
+// 5. Mencegah MIME sniffing
+header('X-Content-Type-Options: nosniff');
+
+// 6. Cache-Control untuk halaman dinamis
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
 
 // Membaca hash commit Git secara dinamis dan aman
 $commit_hash = 'N/A';
@@ -62,11 +86,10 @@ if (!in_array('subtasks', $columns)) {
 $stmt = $pdo->query("SELECT COUNT(*) FROM tasks");
 if ($stmt->fetchColumn() == 0) {
     $dummy_tasks = [
-        ['Alice Watson', 'Implement PHP PDO SQLite connection layer', '2026-05-18', 'done', 'Tinggi', 'Kerja', '[]'],
-        ['Bob Miller', 'Design custom responsive product-grid system in style.css', '2026-05-19', 'on progress', 'Sedang', 'Kerja', '[{"text":"Buat file style.css","completed":true},{"text":"Terapkan glassmorphism","completed":false}]'],
-        ['Alice Watson', 'Develop high-performance Canvas API custom bar chart', '2026-05-20', 'on progress', 'Tinggi', 'Kuliah', '[{"text":"Gambar grid horizontal","completed":true},{"text":"Gambar bar gradient","completed":true},{"text":"Gambar label user","completed":false}]'],
-        ['Charlie Davies', 'Configure CI/CD workflows and dockerize for VPS deployment', '2026-05-22', 'cancelled', 'Rendah', 'Kerja', '[]'],
-        ['Bob Miller', 'Conduct visual quality assurance on desktop & mobile screens', '2026-05-21', 'done', 'Sedang', 'Lainnya', '[]']
+        ['Azhraf', 'Penerapan GIT Flow dan Kolaborasi', '2026-05-26', 'done', 'Tinggi', 'Kuliah', '[]'],
+        ['Meyla', 'Kualitas Aplikasi dan dokumentasi', '2026-05-26', 'on progress', 'Sedang', 'Kuliah', '[]'],
+        ['Rifky', 'Keberhasilan akses via Domain & HTTPS', '2026-05-19', 'done', 'Tinggi', 'Kuliah', '[]'],
+        ['Devi', 'Otomatisasi CI/CD', '2026-05-19', 'done', 'Sedang', 'Lainnya', '[]']
     ];
     $insert_stmt = $pdo->prepare("INSERT INTO tasks (name, task, date, status, priority, category, subtasks) VALUES (?, ?, ?, ?, ?, ?, ?)");
     foreach ($dummy_tasks as $task) {
@@ -300,8 +323,8 @@ if ($action) {
                     <i class="fa-solid fa-list-check"></i>
                 </div>
                 <div>
-                    <h1>TaskPlanner</h1>
-                    <p class="subtitle">Website To-do-list Premium berbasis PHP</p>
+                    <h1>To-Do List</h1>
+                    <p class="subtitle">Kelompok 3 - Cloud Computing</p>
                 </div>
             </div>
             
@@ -341,7 +364,7 @@ if ($action) {
             <!-- PANEL KIRI: FORMULIR MASUKAN & BAGAN ANALITIK -->
             <aside class="dashboard-left">
                 
-                <!-- KARTU FORMULIR TUGAS -->
+                
                 <div class="card form-card" id="form-card-panel">
                     <div class="card-header header-between">
                         <div class="header-left">
@@ -355,7 +378,7 @@ if ($action) {
                     <form id="task-creation-form" class="task-form">
                         <div class="form-group">
                             <label for="input-name">
-                                <i class="fa-solid fa-user"></i> Nama Pemilik (User)
+                                <i class="fa-solid fa-user"></i> Nama (User)
                             </label>
                             <input 
                                 type="text" 
@@ -380,7 +403,7 @@ if ($action) {
                             ></textarea>
                         </div>
 
-                        <!-- PILIHAN PRIORITAS (PILLS) -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-triangle-exclamation"></i> Prioritas Tugas</label>
                             <div class="priority-selector" id="priority-selector-create">
@@ -399,7 +422,7 @@ if ($action) {
                             </div>
                         </div>
 
-                        <!-- PILIHAN KATEGORI (PILLS) -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-tags"></i> Kategori</label>
                             <div class="category-selector" id="category-selector-create">
@@ -422,12 +445,12 @@ if ($action) {
                             </div>
                         </div>
 
-                        <!-- SUB-TUGAS BUILDER -->
+                        
                         <div class="form-group">
                             <label><i class="fa-solid fa-list-check"></i> Sub-tugas (Checklist)</label>
                             <div class="subtask-builder-container">
                                 <div class="subtask-inputs-list" id="subtask-list-create">
-                                    <!-- Input baris sub-tugas dinamis di sini -->
+                                    
                                 </div>
                                 <button type="button" class="btn-add-subtask-row" id="btn-add-subtask-create">
                                     <i class="fa-solid fa-plus-circle"></i> Tambah Sub-tugas
@@ -438,7 +461,7 @@ if ($action) {
                         <div class="form-row">
                             <div class="form-group flex-1">
                                 <label for="input-date">
-                                    <i class="fa-regular fa-calendar-days"></i> Tanggal Batas
+                                    <i class="fa-regular fa-calendar-days"></i> Deadline
                                 </label>
                                 <input 
                                     type="date" 
@@ -449,7 +472,7 @@ if ($action) {
                             
                             <div class="form-group flex-1">
                                 <label for="input-status">
-                                    <i class="fa-solid fa-arrow-progress"></i> Status Awal
+                                    <i class="fa-solid fa-arrow-progress"></i> Status
                                 </label>
                                 <select id="input-status" required>
                                     <option value="on progress" selected>On Progress</option>
@@ -465,12 +488,12 @@ if ($action) {
                     </form>
                 </div>
 
-                <!-- KARTU ANALITIK: CANVAS BAR CHART -->
+                
                 <div class="card chart-card">
                     <div class="card-header header-between">
                         <div class="header-left">
                             <i class="fa-solid fa-chart-simple text-accent"></i>
-                            <h2>Volume Tugas Per User</h2>
+                            <h2>Visualisasi - Bar Chart</h2>
                         </div>
                     </div>
                     <div class="chart-container">
@@ -480,10 +503,10 @@ if ($action) {
 
             </aside>
 
-            <!-- PANEL KANAN: KONTROL TUGAS & WADAH KARTU -->
+            
             <main class="dashboard-right">
                 
-                <!-- FILTER & SEARCH BAR -->
+               
                 <div class="controls-bar">
                     <div class="search-sort-row">
                         <div class="search-wrapper">
@@ -568,7 +591,7 @@ if ($action) {
 
         <!-- FOOTER -->
         <footer class="dashboard-footer">
-            <p>TaskPlanner &copy; 2026 &bull; VPS-Ready Serverless SQLite PHP Stack &bull; <span class="commit-badge"><i class="fa-solid fa-code-branch"></i> <?= htmlspecialchars($commit_hash) ?></span></p>
+            <p>Copyright &copy; 2026 &bull; To-Do List Kelompok 3 &bull; <span class="commit-badge"><i class="fa-solid fa-code-branch"></i> <?= htmlspecialchars($commit_hash) ?></span></p>
         </footer>
     </div>
 
@@ -586,7 +609,7 @@ if ($action) {
                 
                 <div class="form-group">
                     <label for="edit-name">
-                        <i class="fa-solid fa-user"></i> Nama Pemilik (User)
+                        <i class="fa-solid fa-user"></i> Nama User
                     </label>
                     <input 
                         type="text" 
