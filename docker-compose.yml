@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
-  app:
+  web:
     build: .
     container_name: cloudcomp-app
     ports:
-      - "3000:3000"
+      - "80:80"
     volumes:
-      - .:/app
-      - /app/node_modules
+      - .:/var/www/html
+      - ./database.sqlite:/var/www/html/database.sqlite
     restart: always
